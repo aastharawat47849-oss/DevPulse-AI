@@ -1,0 +1,5 @@
+{
+  "summary": "FastAPI REST API Web Server for DevPulse AI with endpoints for code auditing, GitHub webhooks, and health status checks.",
+  "updatedAt": "2026-09-13T05:23:41.782026600Z",
+  "userFacing": true
+}

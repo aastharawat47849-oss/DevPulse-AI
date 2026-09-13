@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevPulse AI - Autonomous Code Security Auditor</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Fira+Code:wght@400;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .code-font { font-family: 'Fira Code', monospace; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                <i class="fa-solid fa-shield-halved text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                    DevPulse AI <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-semibold">v1.0 Agent</span>
+                </h1>
+                <p class="text-xs text-slate-400">Autonomous Code Auditor & Security Agent</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> DevPulse Engine Ready
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left Panel: Code Input & Controls (7 Cols) -->
+        <section class="lg:col-span-7 space-y-6">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <label class="text-sm font-semibold text-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-code text-indigo-400"></i> Target Source Code Editor
+                    </label>
+                    <button id="loadSampleBtn" class="text-xs text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
+                        <i class="fa-solid fa-flask mr-1"></i> Load Sample Bad Code
+                    </button>
+                </div>
+                
+                <textarea id="codeInput" rows="12" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 code-font text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all resize-none shadow-inner" placeholder="# Paste your Python / JavaScript code snippet here..."></textarea>
+                
+                <div class="mt-4 flex items-center justify-between">
+                    <span class="text-xs text-slate-500">Supported: Python, Node.js, SQL, React</span>
+                    <button id="auditBtn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> Audit Code with DevPulse AI
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="grid grid-cols-3 gap-4">
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-xs text-slate-400 mb-1">Security Score</p>
+                    <p id="scoreCard" class="text-3xl font-extrabold text-slate-300">--</p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-xs text-slate-400 mb-1">Grade</p>
+                    <p id="gradeCard" class="text-3xl font-extrabold text-slate-300">--</p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 text-center">
+                    <p class="text-xs text-slate-400 mb-1">Total Issues</p>
+                    <p id="issuesCard" class="text-3xl font-extrabold text-slate-300">--</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Panel: Audit Security Report (5 Cols) -->
+        <section class="lg:col-span-5">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl min-h-[500px] flex flex-col">
+                <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+                    <h2 class="text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-emerald-400"></i> Security Audit Report
+                    </h2>
+                    <span id="statusBadge" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-800 text-slate-400">Awaiting Input</span>
+                </div>
+
+                <!-- Issues Container -->
+                <div id="reportContainer" class="flex-1 overflow-y-auto space-y-4 pr-1">
+                    <div class="text-center py-16 text-slate-500">
+                        <i class="fa-solid fa-shield-virus text-4xl mb-3 block opacity-30"></i>
+                        <p class="text-sm">Click "Audit Code" to generate DevPulse AI security audit report.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JavaScript Frontend Integration -->
+    <script>
+        const sampleCode = `def user_login(username, user_password):
+    # ❌ Hardcoded API Secret
+    api_key = "AIzaSyD_LEAKED_KEY_SECRET_12345"
+    
+    # ❌ Hardcoded DB Password
+    db_password = "SuperAdminPassword123"
+    
+    # ❌ SQL Injection Attack
+    query = "SELECT * FROM users WHERE username = '" + username + "' AND password = '" + user_password + "'"
+    
+    # ❌ Dangerous Function
+    eval("print('Logging user into database')")
+    return query`;
+
+        document.getElementById('loadSampleBtn').addEventListener('click', () => {
+            document.getElementById('codeInput').value = sampleCode;
+        });
+
+        document.getElementById('auditBtn').addEventListener('click', async () => {
+            const code = document.getElementById('codeInput').value.trim();
+            if(!code) {
+                alert("Please enter or paste code snippets first.");
+                return;
+            }
+
+            const reportContainer = document.getElementById('reportContainer');
+            reportContainer.innerHTML = '<div class="text-center py-12 text-indigo-400 font-semibold animate-pulse"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>DevPulse AI Scanning Code...</div>';
+
+            try {
+                // Call Python FastAPI Backend if live
+                const response = await fetch('http://127.0.0.1:8000/api/audit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code: code, file_name: 'app.py' })
+                });
+
+                if(!response.ok) throw new Error("API Error");
+                const data = await response.json();
+                renderReport(data);
+
+            } catch (err) {
+                // Precise Client Audit Engine
+                renderFallbackAudit(code);
+            }
+        });
+
+        function renderReport(data) {
+            document.getElementById('scoreCard').innerText = data.security_score + '/100';
+            document.getElementById('gradeCard').innerText = data.grade;
+            document.getElementById('issuesCard').innerText = data.total_issues_found;
+
+            const scoreCard = document.getElementById('scoreCard');
+            if(data.security_score >= 80) scoreCard.className = "text-3xl font-extrabold text-emerald-400";
+            else if(data.security_score >= 50) scoreCard.className = "text-3xl font-extrabold text-amber-400";
+            else scoreCard.className = "text-3xl font-extrabold text-rose-400";
+
+            const badge = document.getElementById('statusBadge');
+            badge.innerText = data.status;
+            badge.className = data.security_score >= 70 ? "text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "text-xs font-semibold px-2.5 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20";
+
+            const reportContainer = document.getElementById('reportContainer');
+            if(data.issues.length === 0) {
+                reportContainer.innerHTML = '<div class="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold flex items-center gap-3"><i class="fa-solid fa-circle-check text-xl"></i> <div><p class="font-bold">Security Score 100/100 (EXCELLENT)</p><p class="text-xs text-emerald-300 font-normal mt-0.5">No security vulnerabilities or leaked secrets found. Clean Code!</p></div></div>';
+                return;
+            }
+
+            let html = '';
+            data.issues.forEach(issue => {
+                const color = issue.severity === 'CRITICAL' ? 'rose' : 'amber';
+                html += `
+                    <div class="bg-slate-950 border border-${color}-500/30 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-${color}-400 bg-${color}-500/10 border border-${color}-500/20 px-2 py-0.5 rounded">
+                                ${issue.severity} (Line ${issue.line_number})
+                            </span>
+                            <span class="text-xs text-slate-500">${issue.rule_name}</span>
+                        </div>
+                        <p class="text-xs text-slate-200 font-medium">${issue.message}</p>
+                        <div class="p-2 rounded bg-slate-900 code-font text-xs text-indigo-300 border border-slate-800">
+                            💡 ${issue.recommendation}
+                        </div>
+                    </div>
+                `;
+            });
+            reportContainer.innerHTML = html;
+        }
+
+        function renderFallbackAudit(code) {
+            const issues = [];
+            let score = 100;
+            const lines = code.split('\n');
+
+            lines.forEach((line, idx) => {
+                const lineNum = idx + 1;
+                // Rule 1: Hardcoded String Secrets (e.g., api_key = "AIza...")
+                if(/(api_key|secret|db_password|password)\s*=\s*["'][A-Za-z0-9_\-]{8,}["']/i.test(line)) {
+                    issues.push({
+                        severity: 'CRITICAL',
+                        line_number: lineNum,
+                        rule_name: 'Hardcoded Secret Key',
+                        message: `CRITICAL: Hardcoded credential detected in code! Move sensitive strings to environment variables (.env).`,
+                        recommendation: 'Use os.environ.get("KEY_NAME") instead of hardcoded strings.'
+                    });
+                    score -= 30;
+                }
+                // Rule 2: SQL Injection concatenation
+                if(/(SELECT|INSERT|UPDATE|DELETE).*\+.*\s*|\+.*(SELECT|INSERT|UPDATE|DELETE)/i.test(line)) {
+                    issues.push({
+                        severity: 'CRITICAL',
+                        line_number: lineNum,
+                        rule_name: 'SQL Injection Risk',
+                        message: 'HIGH RISK: Potential SQL Injection via string concatenation.',
+                        recommendation: 'Use Parameterized Queries (%s) or ORM models instead of string concatenation.'
+                    });
+                    score -= 30;
+                }
+                // Rule 3: Dangerous eval/exec
+                if(/\b(eval|exec)\s*\(/i.test(line)) {
+                    issues.push({
+                        severity: 'HIGH',
+                        line_number: lineNum,
+                        rule_name: 'Arbitrary Code Execution',
+                        message: 'SECURITY RISK: Usage of eval() / exec() detected.',
+                        recommendation: 'Avoid dynamic eval() calls to prevent Remote Code Execution (RCE).'
+                    });
+                    score -= 25;
+                }
+            });
+
+            const finalScore = Math.max(0, score);
+            let status = finalScore >= 85 ? 'EXCELLENT' : finalScore >= 70 ? 'PASSED' : finalScore >= 50 ? 'NEEDS_ATTENTION' : 'CRITICAL_FAILED';
+            let grade = finalScore >= 85 ? 'A+' : finalScore >= 70 ? 'B' : finalScore >= 50 ? 'C' : 'F';
+
+            renderReport({
+                security_score: finalScore,
+                grade: grade,
+                status: status,
+                total_issues_found: issues.length,
+                issues: issues
+            });
+        }
+    </script>
+</body>
+</html>

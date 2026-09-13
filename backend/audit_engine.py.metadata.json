@@ -1,0 +1,5 @@
+{
+  "summary": "Production-grade Security Audit Engine module for DevPulse AI. Detects API keys, SQL Injection, XSS, Hardcoded passwords, and dangerous functions with score calculation.",
+  "updatedAt": "2026-09-13T05:23:33.916810300Z",
+  "userFacing": true
+}
