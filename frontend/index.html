@@ -31,7 +31,7 @@
         </div>
         <div class="flex items-center space-x-4">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> DevPulse Engine Ready
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> DevPulse Engine Active
             </span>
         </div>
     </header>
@@ -131,7 +131,6 @@
             reportContainer.innerHTML = '<div class="text-center py-12 text-indigo-400 font-semibold animate-pulse"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>DevPulse AI Scanning Code...</div>';
 
             try {
-                // Call Python FastAPI Backend if live
                 const response = await fetch('http://127.0.0.1:8000/api/audit', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -143,7 +142,6 @@
                 renderReport(data);
 
             } catch (err) {
-                // Precise Client Audit Engine
                 renderFallbackAudit(code);
             }
         });
@@ -170,7 +168,7 @@
 
             let html = '';
             data.issues.forEach(issue => {
-                const color = issue.severity === 'CRITICAL' ? 'rose' : 'amber';
+                const color = issue.severity === 'CRITICAL' ? 'rose' : issue.severity === 'HIGH' ? 'amber' : 'indigo';
                 html += `
                     <div class="bg-slate-950 border border-${color}-500/30 rounded-xl p-4 space-y-2">
                         <div class="flex items-center justify-between">
@@ -196,7 +194,38 @@
 
             lines.forEach((line, idx) => {
                 const lineNum = idx + 1;
-                // Rule 1: Hardcoded String Secrets (e.g., api_key = "AIza...")
+                const trimmed = line.trim();
+
+                // Skip comments
+                if(trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+
+                // Rule 1: Syntax Error - Unclosed Quotes (Odd count of quotes)
+                const doubleQuotes = (line.match(/"/g) || []).length;
+                const singleQuotes = (line.match(/'/g) || []).length;
+                if((doubleQuotes % 2 !== 0) || (singleQuotes % 2 !== 0)) {
+                    issues.push({
+                        severity: 'HIGH',
+                        line_number: lineNum,
+                        rule_name: 'Syntax Error (Unclosed String)',
+                        message: 'SYNTAX ERROR: Unclosed string literal detected on this line.',
+                        recommendation: 'Close string literals with matching quotes (" or \').'
+                    });
+                    score -= 30;
+                }
+
+                // Rule 2: Incomplete Variable Assignment (e.g., query = " or key =)
+                if(/\b\w+\s*=\s*["']?\s*$/i.test(trimmed)) {
+                    issues.push({
+                        severity: 'HIGH',
+                        line_number: lineNum,
+                        rule_name: 'Incomplete Assignment',
+                        message: 'SYNTAX ERROR: Empty or unassigned variable declaration.',
+                        recommendation: 'Provide a valid value or string for variable assignment.'
+                    });
+                    score -= 25;
+                }
+
+                // Rule 3: Hardcoded String Secrets (e.g., api_key = "AIza...")
                 if(/(api_key|secret|db_password|password)\s*=\s*["'][A-Za-z0-9_\-]{8,}["']/i.test(line)) {
                     issues.push({
                         severity: 'CRITICAL',
@@ -205,9 +234,10 @@
                         message: `CRITICAL: Hardcoded credential detected in code! Move sensitive strings to environment variables (.env).`,
                         recommendation: 'Use os.environ.get("KEY_NAME") instead of hardcoded strings.'
                     });
-                    score -= 30;
+                    score -= 35;
                 }
-                // Rule 2: SQL Injection concatenation
+
+                // Rule 4: SQL Injection concatenation
                 if(/(SELECT|INSERT|UPDATE|DELETE).*\+.*\s*|\+.*(SELECT|INSERT|UPDATE|DELETE)/i.test(line)) {
                     issues.push({
                         severity: 'CRITICAL',
@@ -218,7 +248,8 @@
                     });
                     score -= 30;
                 }
-                // Rule 3: Dangerous eval/exec
+
+                // Rule 5: Dangerous eval/exec
                 if(/\b(eval|exec)\s*\(/i.test(line)) {
                     issues.push({
                         severity: 'HIGH',
