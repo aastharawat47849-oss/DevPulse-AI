@@ -53,7 +53,7 @@ Double-click `frontend/index.html` or open it in any browser!
 
 ---
 
-## 📄 Resume Bullet Points (For 20-30 LPA Placement)
+## 📄 Key Engineering Highlights
 
 * **Architected DevPulse AI**, an autonomous code auditor using Python FastAPI & Regex Pattern Matching to detect security vulnerabilities (SQL Injection, Hardcoded Secrets).
 * **Built real-time GitHub Webhook Integration**, automating inline pull request security comments and reducing manual PR review time by 60%.
