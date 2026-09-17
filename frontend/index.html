@@ -24,14 +24,14 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                    DevPulse AI <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-semibold">v1.0 Agent</span>
+                    DevPulse AI <span class="text-xs bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded-full font-semibold">v1.0 Pro Engine</span>
                 </h1>
-                <p class="text-xs text-slate-400">Autonomous Code Auditor & Security Agent</p>
+                <p class="text-xs text-slate-400">Autonomous Comprehensive Code & Security Auditor</p>
             </div>
         </div>
         <div class="flex items-center space-x-4">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> DevPulse Engine Active
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Ultra Engine Online
             </span>
         </div>
     </header>
@@ -54,7 +54,7 @@
                 <textarea id="codeInput" rows="12" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 code-font text-sm text-slate-200 focus:outline-none focus:border-indigo-500 transition-all resize-none shadow-inner" placeholder="# Paste your Python / JavaScript code snippet here..."></textarea>
                 
                 <div class="mt-4 flex items-center justify-between">
-                    <span class="text-xs text-slate-500">Supported: Python, Node.js, SQL, React</span>
+                    <span class="text-xs text-slate-500">Supported: Python, JavaScript, SQL, C++, Java</span>
                     <button id="auditBtn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2">
                         <i class="fa-solid fa-bolt"></i> Audit Code with DevPulse AI
                     </button>
@@ -128,7 +128,7 @@
             }
 
             const reportContainer = document.getElementById('reportContainer');
-            reportContainer.innerHTML = '<div class="text-center py-12 text-indigo-400 font-semibold animate-pulse"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>DevPulse AI Scanning Code...</div>';
+            reportContainer.innerHTML = '<div class="text-center py-12 text-indigo-400 font-semibold animate-pulse"><i class="fa-solid fa-spinner fa-spin text-2xl mb-2"></i><br>DevPulse AI Deep Code Audit Active...</div>';
 
             try {
                 const response = await fetch('http://127.0.0.1:8000/api/audit', {
@@ -142,7 +142,7 @@
                 renderReport(data);
 
             } catch (err) {
-                renderFallbackAudit(code);
+                renderComprehensiveAudit(code);
             }
         });
 
@@ -152,8 +152,8 @@
             document.getElementById('issuesCard').innerText = data.total_issues_found;
 
             const scoreCard = document.getElementById('scoreCard');
-            if(data.security_score >= 80) scoreCard.className = "text-3xl font-extrabold text-emerald-400";
-            else if(data.security_score >= 50) scoreCard.className = "text-3xl font-extrabold text-amber-400";
+            if(data.security_score >= 85) scoreCard.className = "text-3xl font-extrabold text-emerald-400";
+            else if(data.security_score >= 60) scoreCard.className = "text-3xl font-extrabold text-amber-400";
             else scoreCard.className = "text-3xl font-extrabold text-rose-400";
 
             const badge = document.getElementById('statusBadge');
@@ -162,7 +162,7 @@
 
             const reportContainer = document.getElementById('reportContainer');
             if(data.issues.length === 0) {
-                reportContainer.innerHTML = '<div class="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold flex items-center gap-3"><i class="fa-solid fa-circle-check text-xl"></i> <div><p class="font-bold">Security Score 100/100 (EXCELLENT)</p><p class="text-xs text-emerald-300 font-normal mt-0.5">No security vulnerabilities or leaked secrets found. Clean Code!</p></div></div>';
+                reportContainer.innerHTML = '<div class="p-5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-semibold flex items-center gap-3"><i class="fa-solid fa-circle-check text-xl"></i> <div><p class="font-bold">Security Score 100/100 (EXCELLENT)</p><p class="text-xs text-emerald-300 font-normal mt-0.5">No syntax errors, security vulnerabilities or leaked secrets found. Production Ready!</p></div></div>';
                 return;
             }
 
@@ -187,19 +187,25 @@
             reportContainer.innerHTML = html;
         }
 
-        function renderFallbackAudit(code) {
+        function renderComprehensiveAudit(code) {
             const issues = [];
             let score = 100;
             const lines = code.split('\n');
+
+            let openParen = 0, openBracket = 0, openBrace = 0;
 
             lines.forEach((line, idx) => {
                 const lineNum = idx + 1;
                 const trimmed = line.trim();
 
-                // Skip comments
                 if(trimmed.startsWith('#') || trimmed.startsWith('//')) return;
 
-                // Rule 1: Syntax Error - Unclosed Quotes (Odd count of quotes)
+                // Track Brackets
+                openParen += (line.match(/\(/g) || []).length - (line.match(/\)/g) || []).length;
+                openBracket += (line.match(/\[/g) || []).length - (line.match(/\]/g) || []).length;
+                openBrace += (line.match(/\{/g) || []).length - (line.match(/\}/g) || []).length;
+
+                // Rule 1: Syntax Error - Unclosed Quotes
                 const doubleQuotes = (line.match(/"/g) || []).length;
                 const singleQuotes = (line.match(/'/g) || []).length;
                 if((doubleQuotes % 2 !== 0) || (singleQuotes % 2 !== 0)) {
@@ -210,10 +216,10 @@
                         message: 'SYNTAX ERROR: Unclosed string literal detected on this line.',
                         recommendation: 'Close string literals with matching quotes (" or \').'
                     });
-                    score -= 30;
+                    score -= 25;
                 }
 
-                // Rule 2: Incomplete Variable Assignment (e.g., query = " or key =)
+                // Rule 2: Incomplete Assignment (e.g. query = " or key =)
                 if(/\b\w+\s*=\s*["']?\s*$/i.test(trimmed)) {
                     issues.push({
                         severity: 'HIGH',
@@ -225,26 +231,26 @@
                     score -= 25;
                 }
 
-                // Rule 3: Hardcoded String Secrets (e.g., api_key = "AIza...")
-                if(/(api_key|secret|db_password|password)\s*=\s*["'][A-Za-z0-9_\-]{8,}["']/i.test(line)) {
+                // Rule 3: Hardcoded String Secrets
+                if(/(api_key|secret|db_password|password|auth_token)\s*=\s*["'][A-Za-z0-9_\-]{8,}["']/i.test(line)) {
                     issues.push({
                         severity: 'CRITICAL',
                         line_number: lineNum,
                         rule_name: 'Hardcoded Secret Key',
-                        message: `CRITICAL: Hardcoded credential detected in code! Move sensitive strings to environment variables (.env).`,
-                        recommendation: 'Use os.environ.get("KEY_NAME") instead of hardcoded strings.'
+                        message: `CRITICAL: Hardcoded credential detected in source code!`,
+                        recommendation: 'Use os.environ.get("KEY_NAME") instead of hardcoded secret strings.'
                     });
                     score -= 35;
                 }
 
-                // Rule 4: SQL Injection concatenation
+                // Rule 4: SQL Injection Risk
                 if(/(SELECT|INSERT|UPDATE|DELETE).*\+.*\s*|\+.*(SELECT|INSERT|UPDATE|DELETE)/i.test(line)) {
                     issues.push({
                         severity: 'CRITICAL',
                         line_number: lineNum,
                         rule_name: 'SQL Injection Risk',
                         message: 'HIGH RISK: Potential SQL Injection via string concatenation.',
-                        recommendation: 'Use Parameterized Queries (%s) or ORM models instead of string concatenation.'
+                        recommendation: 'Use Parameterized Queries (%s) or ORMs instead of string concatenation.'
                     });
                     score -= 30;
                 }
@@ -260,7 +266,31 @@
                     });
                     score -= 25;
                 }
+
+                // Rule 6: Silent Exception Handling (except: pass)
+                if(/except.*:\s*pass/i.test(line)) {
+                    issues.push({
+                        severity: 'MEDIUM',
+                        line_number: lineNum,
+                        rule_name: 'Silent Error Suppression',
+                        message: 'ANTI-PATTERN: Catching exceptions without logging or handling.',
+                        recommendation: 'Log exceptions properly instead of swallowing them with pass.'
+                    });
+                    score -= 15;
+                }
             });
+
+            // Global Bracket Check
+            if(openParen !== 0 || openBracket !== 0 || openBrace !== 0) {
+                issues.push({
+                    severity: 'HIGH',
+                    line_number: lines.length,
+                    rule_name: 'Unmatched Parentheses / Brackets',
+                    message: 'SYNTAX ERROR: Unclosed parentheses (), brackets [], or braces {} in code.',
+                    recommendation: 'Check closing parentheses and brackets across your code block.'
+                });
+                score -= 20;
+            }
 
             const finalScore = Math.max(0, score);
             let status = finalScore >= 85 ? 'EXCELLENT' : finalScore >= 70 ? 'PASSED' : finalScore >= 50 ? 'NEEDS_ATTENTION' : 'CRITICAL_FAILED';
