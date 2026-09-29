@@ -24,7 +24,6 @@
 - [Supported Security Scanners (OWASP Top 10)](#-supported-security-scanners-owasp-top-10)
 - [Quick Start Guide](#-quick-start-guide)
 - [API Documentation](#-api-documentation)
-- [Dashboard Preview](#-dashboard-preview)
 - [License](#-license)
 
 ---
@@ -95,8 +94,8 @@ sequenceDiagram
 ### 1. Backend Setup (FastAPI & AI Engine)
 ```bash
 # Clone repository
-git clone https://github.com/your-username/devpulse-ai.git
-cd devpulse-ai/backend
+git clone https://github.com/aastharawat47849-oss/DevPulse-AI.git
+cd DevPulse-AI/backend
 
 # Install dependencies
 pip install -r requirements.txt
@@ -117,49 +116,10 @@ python -m http.server 3000 --directory frontend
 
 ---
 
-## 🔌 API Documentation
-
-### `POST /api/v1/scan`
-Scans raw code content and returns structured audit results.
-
-**Request Body:**
-```json
-{
-  "file_name": "auth_service.py",
-  "code_content": "query = f'SELECT * FROM users WHERE id = {user_id}'"
-}
-```
-
-**Response Output:**
-```json
-{
-  "audit_id": "AUDIT-A8F91B",
-  "file_name": "auth_service.py",
-  "security_score": 75.0,
-  "risk_level": "MODERATE RISK (WARNING)",
-  "total_issues": 1,
-  "critical_count": 1,
-  "vulnerabilities": [
-    {
-      "id": "VULN-4192AB",
-      "rule_name": "SQL Injection Vulnerability",
-      "category": "CWE-89",
-      "severity": "CRITICAL",
-      "line_number": 1,
-      "vulnerable_code": "query = f'SELECT * FROM users WHERE id = {user_id}'",
-      "remediation": "Use parameterized queries with prepared statements.",
-      "ai_suggested_fix": "cursor.execute('SELECT * FROM users WHERE id = %s', (user_id,))"
-    }
-  ]
-}
-```
-
----
-
 ## 👤 Author & Acknowledgements
 
-Created with ❤️ by **B.Tech ECE & Security Enthusiast**.  
-*For questions or contributions, feel free to submit a Pull Request!*
+Created with ❤️ by **Aastha Rawat** ([@aastharawat47849-oss](https://github.com/aastharawat47849-oss)).  
+*B.Tech ECE & Software Security Enthusiast.*
 
 ---
 

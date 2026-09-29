@@ -1,4 +1,4 @@
-# 🚀 LinkedIn Announcement Post Template for DevPulse AI
+# 🚀 LinkedIn Announcement Post Template for Aastha Rawat
 
 Copy & paste this post on LinkedIn to showcase your project to recruiters, software engineers, and cybersecurity leaders!
 
@@ -27,7 +27,7 @@ An interactive cyberpunk-themed dashboard featuring animated Security Score Gaug
 
 💡 Tech Stack: Python 3.12 | FastAPI | Pydantic | Next.js | Tailwind CSS | GitHub Webhooks API | OWASP Rules
 
-📂 GitHub Repository: https://github.com/your-username/devpulse-ai
+📂 GitHub Repository: https://github.com/aastharawat47849-oss/DevPulse-AI
 (Star ⭐ the repo if you find it helpful!)
 
 I'd love to hear your feedback from developers, security engineers, and DevOps folks! What security rule should I add next? 👇
@@ -40,4 +40,4 @@ I'd love to hear your feedback from developers, security engineers, and DevOps f
 ### 💡 Tips for Maximum Engagement on LinkedIn:
 1. Attach a screenshot or 15-second screen recording of the **DevPulse AI Dashboard (`frontend/index.html`)**.
 2. Tag relevant tech keywords and university/college handles.
-3. Add the GitHub repository link in the first comment or main post!
+3. Add the GitHub repository link `https://github.com/aastharawat47849-oss/DevPulse-AI` in your main post or first comment!
