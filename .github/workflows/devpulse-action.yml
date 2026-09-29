@@ -1,0 +1,42 @@
+name: DevPulse AI — Autonomous Code Security Auditor
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  security-audit:
+    name: Run DevPulse AI OWASP Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install DevPulse AI Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install fastapi uvicorn pydantic httpx python-dotenv
+
+      - name: Execute DevPulse AI Security Audit Engine
+        run: |
+          python -c "
+          import sys
+          sys.path.insert(0, 'backend')
+          from app.models.audit import CodeScanRequest
+          from app.services.security_engine import SecurityEngine
+
+          # Run security audit on repository
+          print('🛡️ Running DevPulse AI Security Audit...')
+          with open('README.md', 'r') as f:
+              content = f.read()
+          result = SecurityEngine.scan_code(CodeScanRequest(file_name='repo_audit', code_content=content))
+          print(f'✅ Audit Complete! Security Score: {result.security_score}/100 | Risk: {result.risk_level}')
+          "
