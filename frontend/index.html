@@ -239,11 +239,15 @@ def execute_admin_command(user_command):
             </p>
 
             <div class="space-y-3">
-                <textarea id="custom-code-input" rows="6" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-4 text-xs font-mono text-gray-200 focus:outline-none focus:border-blue-500 custom-scrollbar" placeholder="Paste your python code snippet here to test..."></textarea>
-                <div class="flex space-x-3">
+                <textarea id="custom-code-input" rows="8" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-4 text-xs font-mono text-gray-200 focus:outline-none focus:border-blue-500 custom-scrollbar" placeholder="Paste your python code snippet here to test..."></textarea>
+                <div class="flex flex-wrap gap-3">
                     <button onclick="runLiveAudit()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-5 py-2.5 rounded-lg transition-all flex items-center space-x-2">
                         <i class="fa-solid fa-play"></i>
                         <span>Run Live Security Audit</span>
+                    </button>
+                    <button onclick="clearCustomCode()" class="bg-red-900/40 hover:bg-red-800/60 text-red-300 border border-red-500/30 text-xs font-medium px-4 py-2.5 rounded-lg transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>Clear Code</span>
                     </button>
                     <button onclick="loadSampleTest(1)" class="bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium px-4 py-2.5 rounded-lg transition-all">
                         Load Vulnerable Code Test
@@ -312,6 +316,10 @@ def login_user(username, password):
             } else {
                 document.getElementById('custom-code-input').value = `import os\nimport sqlite3\n\nAPI_KEY = os.getenv('API_KEY')\ncursor.execute("SELECT * FROM users WHERE username = %s", (username,))`;
             }
+        }
+
+        function clearCustomCode() {
+            document.getElementById('custom-code-input').value = '';
         }
 
         async function runLiveAudit() {
