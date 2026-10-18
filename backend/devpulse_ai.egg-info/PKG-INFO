@@ -4,12 +4,8 @@ Version: 1.0.0
 Summary: Autonomous Code Security Auditor & GitHub PR Review Agent
 Home-page: https://github.com/aastharawat47849-oss/DevPulse-AI
 Author: Aastha Rawat
-Author-email: aastharawat47849@gmail.com
-Classifier: Programming Language :: Python :: 3
-Classifier: License :: OSI Approved :: MIT License
-Classifier: Operating System :: OS Independent
-Classifier: Topic :: Security
-Classifier: Topic :: Software Development :: Quality Assurance
+Author-email: Aastha Rawat <aastharawat47849@gmail.com>
+License: MIT
 Requires-Python: >=3.11
 Description-Content-Type: text/markdown
 License-File: LICENSE
@@ -19,15 +15,9 @@ Requires-Dist: pydantic>=2.6.4
 Requires-Dist: httpx>=0.27.0
 Requires-Dist: python-dotenv>=1.0.1
 Dynamic: author
-Dynamic: author-email
-Dynamic: classifier
-Dynamic: description
-Dynamic: description-content-type
 Dynamic: home-page
 Dynamic: license-file
-Dynamic: requires-dist
 Dynamic: requires-python
-Dynamic: summary
 
 # 🛡️ DevPulse AI — Autonomous Code Security Auditor & GitHub PR Review Agent
 

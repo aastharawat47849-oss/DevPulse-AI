@@ -2,7 +2,14 @@ import re
 import uuid
 from datetime import datetime, timezone
 from typing import List
-from app.models.audit import Vulnerability, Severity, AuditResult, CodeScanRequest
+
+try:
+    from app.models.audit import Vulnerability, Severity, AuditResult, CodeScanRequest
+except ImportError:
+    try:
+        from models.audit import Vulnerability, Severity, AuditResult, CodeScanRequest
+    except ImportError:
+        from backend.app.models.audit import Vulnerability, Severity, AuditResult, CodeScanRequest
 
 class SecurityEngine:
     """

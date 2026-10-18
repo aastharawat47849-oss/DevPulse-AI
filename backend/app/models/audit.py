@@ -1,6 +1,18 @@
 from enum import Enum
 from typing import List, Optional
-from pydantic import BaseModel, Field
+
+try:
+    from pydantic import BaseModel, Field
+except ImportError:
+    class BaseModel:
+        def __init__(self, **kwargs):
+            for k, v in kwargs.items():
+                setattr(self, k, v)
+        def dict(self):
+            return self.__dict__
+
+    def Field(default=..., **kwargs):
+        return default
 
 class Severity(str, Enum):
     CRITICAL = "CRITICAL"

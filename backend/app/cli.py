@@ -1,27 +1,62 @@
 import sys
 import os
-from app.models.audit import CodeScanRequest
-from app.services.security_engine import SecurityEngine
+
+# Automatically resolve paths so cli.py works from anywhere
+current_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.dirname(current_dir)
+repo_dir = os.path.dirname(backend_dir)
+for p in [repo_dir, backend_dir, current_dir]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+try:
+    from app.models.audit import CodeScanRequest
+    from app.services.security_engine import SecurityEngine
+except ImportError:
+    try:
+        from models.audit import CodeScanRequest
+        from services.security_engine import SecurityEngine
+    except ImportError:
+        from backend.app.models.audit import CodeScanRequest
+        from backend.app.services.security_engine import SecurityEngine
 
 def main():
     """
     DevPulse AI CLI Tool for local terminal security auditing.
-    Usage: devpulse scan <file_path>
+    Usage:
+        python scan.py <file_path>
+        devpulse scan <file_path>
+        python -m devpulse scan <file_path>
     """
     args = sys.argv[1:]
-    if not args or args[0] != "scan":
+    
+    # Handle help or no arguments
+    if not args or args[0] in ("-h", "--help", "help"):
+        print("\n" + "=" * 60)
         print("[+] DevPulse AI -- Autonomous Code Security Auditor")
-        print("Usage: devpulse scan <file_path>")
-        print("Example: devpulse scan main.py")
+        print("=" * 60)
+        print("Usage:")
+        print("  python scan.py <file_path>          (Direct file scan)")
+        print("  devpulse scan <file_path>           (CLI command)")
+        print("  python -m devpulse scan <file_path> (Module command)")
+        print("\nExamples:")
+        print("  python scan.py test_vulnerable.py")
+        print("  devpulse scan main.py")
+        print("=" * 60 + "\n")
         sys.exit(0)
 
-    target_file = args[1] if len(args) > 1 else "main.py"
+    # If first argument is 'scan', use next argument as file. Otherwise first arg is file!
+    if args[0] == "scan":
+        target_file = args[1] if len(args) > 1 else "main.py"
+    else:
+        target_file = args[0]
     
     if not os.path.exists(target_file):
-        print(f"[-] Error: File '{target_file}' not found!")
+        print(f"\n[-] Error: File '{target_file}' not found!")
+        print(f"[*] Searched in current directory: {os.getcwd()}")
         sys.exit(1)
 
-    with open(target_file, "r", encoding="utf-8") as f:
+    with open(target_file, "r", encoding="utf-8", errors="ignore") as f:
         code_content = f.read()
 
     print(f"\n[*] DevPulse AI Auditing File: '{target_file}'...")

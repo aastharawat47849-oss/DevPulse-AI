@@ -87,32 +87,38 @@ sequenceDiagram
 
 ## 🚀 Quick Start Guide
 
-### Prerequisites
-- Python 3.11+
-- Node.js 18+ (optional for dashboard)
-
-### 1. Backend Setup (FastAPI & AI Engine)
+### ⚡ Option 1: Instant Quick Scan (Zero Setup Required!)
+Clone the repo and scan any Python file immediately without any installation:
 ```bash
-# Clone repository
 git clone https://github.com/aastharawat47849-oss/DevPulse-AI.git
-cd DevPulse-AI/backend
+cd DevPulse-AI
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Start FastAPI server
-python app/main.py
+# Scan any python file instantly:
+python scan.py test_vulnerable.py
 ```
-*FastAPI API Server will be running at `http://localhost:8000`*
 
-### 2. Frontend Dashboard Setup
+### 📦 Option 2: Install via Pip & Global CLI
 ```bash
-# Open interactive dashboard in your browser
-double-click / frontend/index.html
-# OR serve via python:
-python -m http.server 3000 --directory frontend
+pip install git+https://github.com/aastharawat47849-oss/DevPulse-AI.git
+
+# Scan using CLI or Python module:
+devpulse scan main.py
+# OR
+python -m devpulse scan main.py
 ```
-*Dashboard will be available at `http://localhost:3000`*
+
+### 🖥️ Option 3: Full Stack Web Dashboard & API
+```bash
+# 1. Start FastAPI backend engine (Port 8000)
+cd backend
+pip install -r requirements.txt
+python -m uvicorn app.main:app --port 8000 --reload
+
+# 2. Open Cyberpunk Dashboard (Port 3000)
+# Open frontend/index.html in any browser or serve:
+python -m http.server 3000 --directory ../frontend
+```
+*Live Cloud Demo (24/7): [https://aastharawat47849-oss.github.io/DevPulse-AI](https://aastharawat47849-oss.github.io/DevPulse-AI)*
 
 ---
 

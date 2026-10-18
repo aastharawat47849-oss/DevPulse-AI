@@ -31,4 +31,4 @@ if __name__ == "__main__":
     test_detect_hardcoded_secret()
     test_detect_sql_injection()
     test_clean_code_pass()
-    print("✅ All DevPulse AI Backend Security Engine Tests Passed!")
+    print("[+] All DevPulse AI Backend Security Engine Tests Passed!")

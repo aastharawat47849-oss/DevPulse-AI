@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "devpulse-ai"
+version = "1.0.0"
+description = "Autonomous Code Security Auditor & GitHub PR Review Agent"
+readme = "README.md"
+authors = [{ name = "Aastha Rawat", email = "aastharawat47849@gmail.com" }]
+license = { text = "MIT" }
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+    "pydantic>=2.6.4",
+    "httpx>=0.27.0",
+    "python-dotenv>=1.0.1",
+]
+
+[project.scripts]
+devpulse = "app.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
+[tool.setuptools.packages.find]
+where = ["backend"]
