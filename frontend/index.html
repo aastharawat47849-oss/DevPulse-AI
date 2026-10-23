@@ -37,7 +37,7 @@
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2 text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full border border-emerald-500/20">
                     <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="font-medium">FastAPI Engine Online (Port 8000)</span>
+                    <span class="font-medium">AI Security Engine Active</span>
                 </div>
                 <button onclick="scrollToScanner()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-all shadow-md shadow-blue-600/30 flex items-center space-x-2">
                     <i class="fa-solid fa-vial"></i>
@@ -55,7 +55,7 @@
             
             <!-- SECURITY SCORE CARD -->
             <div class="bg-cyber-card rounded-2xl p-6 border border-gray-800 flex flex-col items-center justify-center relative overflow-hidden group">
-                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all"></div>
+                <div id="score-glow" class="absolute -right-6 -bottom-6 w-24 h-24 bg-red-500/10 rounded-full blur-2xl group-hover:bg-red-500/20 transition-all"></div>
                 <span class="text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">Real-Time Security Score</span>
                 <div class="relative flex items-center justify-center my-2">
                     <svg class="w-32 h-32 transform -rotate-90">
@@ -214,7 +214,7 @@ def execute_admin_command(user_command):
                 </div>
 
                 <div class="pt-4 border-t border-gray-800 text-center">
-                    <span class="text-xs text-blue-400 font-medium cursor-pointer hover:underline" onclick="location.reload()">
+                    <span class="text-xs text-blue-400 font-medium cursor-pointer hover:underline" onclick="resetSampleScan()">
                         <i class="fa-solid fa-arrows-rotate mr-1"></i> Reset Sample Scan
                     </span>
                 </div>
@@ -230,18 +230,18 @@ def execute_admin_command(user_command):
                     <h3 class="text-sm font-bold text-white">Live Custom Code Testing Playground</h3>
                 </div>
                 <span class="text-xs text-purple-400 bg-purple-500/10 border border-purple-500/20 px-3 py-1 rounded-full font-medium">
-                    Test Any Code Snippet Live Against FastAPI Engine
+                    Instant Real-Time OWASP Top 10 Audit
                 </span>
             </div>
             
             <p class="text-xs text-gray-400">
-                Paste any Python code snippet below (try pasting a hardcoded secret, SQL query concatenation, or `os.system()` command) and click <b>"Run Live Security Audit"</b> to test the API scanner in real-time!
+                Paste any Python code snippet below (try pasting a hardcoded secret, SQL query concatenation, or `os.system()` command) and click <b>"Run Live Security Audit"</b> to test in real-time!
             </p>
 
             <div class="space-y-3">
                 <textarea id="custom-code-input" rows="8" class="w-full bg-gray-950 border border-gray-800 rounded-xl p-4 text-xs font-mono text-gray-200 focus:outline-none focus:border-blue-500 custom-scrollbar" placeholder="Paste your python code snippet here to test..."></textarea>
                 <div class="flex flex-wrap gap-3">
-                    <button onclick="runLiveAudit()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-5 py-2.5 rounded-lg transition-all flex items-center space-x-2">
+                    <button onclick="runLiveAudit()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-5 py-2.5 rounded-lg transition-all flex items-center space-x-2 shadow-lg shadow-blue-600/30">
                         <i class="fa-solid fa-play"></i>
                         <span>Run Live Security Audit</span>
                     </button>
@@ -261,8 +261,117 @@ def execute_admin_command(user_command):
 
     </main>
 
-    <!-- INTERACTIVE DASHBOARD SCRIPT -->
+    <!-- INTERACTIVE DASHBOARD SCRIPT & EMBEDDED SECURITY ENGINE -->
     <script>
+        // OWASP Top 10 Security Rule Definitions
+        const SECURITY_RULES = [
+            {
+                id: "SEC-001",
+                rule_name: "Hardcoded API Secret / Key",
+                category: "CWE-798: Use of Hard-coded Credentials",
+                severity: "CRITICAL",
+                pattern: /(?:api[_\-]?key|secret[_\-]?key|aws[_\-]?secret|bearer[_\-]?token|password)\s*=\s*['"][A-Za-z0-9/+=]{8,}['"]/i,
+                description: "Hardcoded secret key exposed in source code. Enables cloud account takeover.",
+                remediation: "import os\nAWS_SECRET_KEY = os.getenv('AWS_SECRET_KEY')"
+            },
+            {
+                id: "SEC-002",
+                rule_name: "SQL Injection Vulnerability",
+                category: "CWE-89: Improper Neutralization in SQL Command",
+                severity: "CRITICAL",
+                pattern: /(?:f['"].*?(?:select|insert|update|delete)|(?:select|insert|update|delete)\s+.*?(?:f['"]|\.format\(|\+\s*[a-zA-Z_]|\{[a-zA-Z_]))/i,
+                description: "Unsanitized user input concatenated in SQL query allows SQLi exploits.",
+                remediation: 'cursor.execute("SELECT * FROM users WHERE username = %s", (username,))'
+            },
+            {
+                id: "SEC-003",
+                rule_name: "Remote Code Execution (RCE)",
+                category: "CWE-94: Code Injection",
+                severity: "CRITICAL",
+                pattern: /\b(?:os\.system|eval|exec|subprocess\.Popen\(.*shell\s*=\s*True)\b/i,
+                description: "Executing arbitrary OS commands from user inputs grants full server control.",
+                remediation: "import subprocess\nsubprocess.run(['ls', '-l'], check=True)"
+            },
+            {
+                id: "SEC-004",
+                rule_name: "Cross-Site Scripting (XSS)",
+                category: "CWE-79: Cross-site Scripting",
+                severity: "HIGH",
+                pattern: /\b(?:render_template_string|dangerouslySetInnerHTML|innerHTML\s*=)\b/i,
+                description: "Unescaped client input rendered directly into the DOM or template.",
+                remediation: "from markupsafe import escape\nescaped_val = escape(user_input)"
+            },
+            {
+                id: "SEC-005",
+                rule_name: "Insecure Deserialization",
+                category: "CWE-502: Deserialization of Untrusted Data",
+                severity: "HIGH",
+                pattern: /\b(?:pickle\.loads|yaml\.load\(.*Loader\s*=\s*yaml\.Loader)\b/i,
+                description: "Deserializing untrusted data allows arbitrary object instantiation and RCE.",
+                remediation: "import json\ndata = json.loads(untrusted_payload)"
+            },
+            {
+                id: "SEC-006",
+                rule_name: "Weak Cryptographic Hash Algorithm",
+                category: "CWE-327: Risky Cryptographic Algorithm",
+                severity: "MEDIUM",
+                pattern: /\b(?:hashlib\.md5|hashlib\.sha1)\b/i,
+                description: "MD5 and SHA-1 hashing algorithms are cryptographically broken.",
+                remediation: "import hashlib\nhash_val = hashlib.sha256(data.encode()).hexdigest()"
+            }
+        ];
+
+        // Client-Side Real-Time Audit Engine
+        function auditCodeLocally(codeContent) {
+            const lines = codeContent.split('\n');
+            const vulnerabilities = [];
+
+            lines.forEach((line, idx) => {
+                const trimmed = line.trim();
+                if (!trimmed || trimmed.startsWith('#') || trimmed.startsWith('//')) return;
+
+                SECURITY_RULES.forEach(rule => {
+                    if (rule.pattern.test(trimmed)) {
+                        vulnerabilities.push({
+                            id: rule.id,
+                            rule_name: rule.rule_name,
+                            category: rule.category,
+                            severity: rule.severity,
+                            line_number: idx + 1,
+                            vulnerable_code: trimmed,
+                            description: rule.description,
+                            ai_suggested_fix: rule.remediation
+                        });
+                    }
+                });
+            });
+
+            let score = 100.0;
+            let critical = 0, high = 0, med = 0, low = 0;
+
+            vulnerabilities.forEach(v => {
+                if (v.severity === 'CRITICAL') { score -= 25.0; critical++; }
+                else if (v.severity === 'HIGH') { score -= 15.0; high++; }
+                else if (v.severity === 'MEDIUM') { score -= 10.0; med++; }
+                else { score -= 5.0; low++; }
+            });
+
+            score = Math.max(0.0, score);
+            const risk_level = score >= 85 ? "LOW RISK (PASS)" : (score >= 60 ? "MODERATE RISK" : "CRITICAL RISK (BLOCK PR)");
+
+            return {
+                security_score: score,
+                risk_level: risk_level,
+                total_issues: vulnerabilities.length,
+                critical_count: critical,
+                high_count: high,
+                medium_count: med,
+                low_count: low,
+                vulnerabilities: vulnerabilities
+            };
+        }
+
+        // Apply Fix Function
         function applyFix(issueId) {
             alert('🤖 AI Fix Applied! Code updated to secure production version.');
             
@@ -279,6 +388,8 @@ def execute_admin_command(user_command):
             document.getElementById('total-issues').innerText = '0';
             document.getElementById('crit-count').innerText = '0';
             document.getElementById('high-count').innerText = '0';
+            document.getElementById('med-count').innerText = '0';
+            document.getElementById('low-count').innerText = '0';
             
             document.getElementById('code-display').innerHTML = `import os
 import sqlite3
@@ -296,6 +407,16 @@ def login_user(username, password):
     # ✅ SECURE FIX: SHA-256 Hashing
     hashed_pass = hashlib.sha256(password.encode()).hexdigest()
     return cursor.fetchone()`;
+
+            document.getElementById('issues-badge').innerText = '0 Vulnerabilities Found (All Clean)';
+            document.getElementById('issues-badge').className = 'text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md font-mono';
+            document.getElementById('vuln-list').innerHTML = `
+                <div class="bg-gray-900/90 border border-emerald-500/30 rounded-xl p-4 text-center space-y-2">
+                    <i class="fa-solid fa-circle-check text-emerald-400 text-2xl"></i>
+                    <h4 class="text-xs font-semibold text-emerald-300">All Security Checks Passed</h4>
+                    <p class="text-[11px] text-gray-400">No OWASP Top 10 vulnerabilities detected in code.</p>
+                </div>
+            `;
         }
 
         function applyAllFixes() {
@@ -312,9 +433,9 @@ def login_user(username, password):
 
         function loadSampleTest(type) {
             if (type === 1) {
-                document.getElementById('custom-code-input').value = `AWS_SECRET_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"\nquery = f"SELECT * FROM users WHERE username = '{username}'"\nos.system("ping " + user_input)`;
+                document.getElementById('custom-code-input').value = `import os\nimport sqlite3\nimport hashlib\n\n# 🚨 CRITICAL: Hardcoded Secret Key\nAWS_SECRET_KEY = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"\n\ndef login(username, password):\n    # 🚨 CRITICAL: SQL Injection\n    query = f"SELECT * FROM users WHERE username = '{username}'"\n    cursor.execute(query)\n    \n    # 🚨 MEDIUM: Insecure MD5 Hash\n    pwd_hash = hashlib.md5(password.encode()).hexdigest()\n    \n    # 🚨 CRITICAL: Remote Code Execution\n    os.system("ping " + username)`;
             } else {
-                document.getElementById('custom-code-input').value = `import os\nimport sqlite3\n\nAPI_KEY = os.getenv('API_KEY')\ncursor.execute("SELECT * FROM users WHERE username = %s", (username,))`;
+                document.getElementById('custom-code-input').value = `import os\nimport sqlite3\nimport hashlib\n\n# ✅ SECURE: Loaded from Environment Variables\nAPI_KEY = os.getenv('API_KEY')\n\ndef login(username, password):\n    # ✅ SECURE: Parameterized Query\n    cursor.execute("SELECT * FROM users WHERE username = %s", (username,))\n    \n    # ✅ SECURE: SHA-256 Hashing\n    pwd_hash = hashlib.sha256(password.encode()).hexdigest()`;
             }
         }
 
@@ -322,6 +443,11 @@ def login_user(username, password):
             document.getElementById('custom-code-input').value = '';
         }
 
+        function resetSampleScan() {
+            location.reload();
+        }
+
+        // Live Security Audit Execution (Instant Hybrid Engine)
         async function runLiveAudit() {
             const code = document.getElementById('custom-code-input').value;
             if (!code.trim()) {
@@ -329,41 +455,98 @@ def login_user(username, password):
                 return;
             }
 
+            let data = null;
+
+            // Try local backend if running, otherwise use instant client-side audit engine seamlessly
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 1200); // 1.2s timeout
                 const res = await fetch('http://localhost:8000/api/v1/scan', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ file_name: "live_test.py", code_content: code })
+                    body: JSON.stringify({ file_name: "live_test.py", code_content: code }),
+                    signal: controller.signal
                 });
-                const data = await res.json();
-                
-                alert(`🎯 Live Scan Complete!\nSecurity Score: ${data.security_score}/100\nTotal Issues: ${data.total_issues}\nRisk Level: ${data.risk_level}`);
-                
-                // Update UI Score
-                document.getElementById('score-text').innerText = data.security_score.toFixed(1);
-                document.getElementById('total-issues').innerText = data.total_issues;
-                document.getElementById('crit-count').innerText = data.critical_count;
-                document.getElementById('high-count').innerText = data.high_count;
-                document.getElementById('med-count').innerText = data.medium_count;
-                document.getElementById('low-count').innerText = data.low_count;
-                document.getElementById('current-filename').innerText = "live_test.py";
-
-                if (data.security_score >= 85) {
-                    document.getElementById('score-text').className = 'absolute text-3xl font-extrabold text-emerald-400';
-                    document.getElementById('risk-badge').innerText = 'LOW RISK (PASS)';
-                    document.getElementById('risk-badge').className = 'mt-2 text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
-                } else {
-                    document.getElementById('score-text').className = 'absolute text-3xl font-extrabold text-red-500';
-                    document.getElementById('risk-badge').innerText = 'CRITICAL RISK (BLOCK PR)';
-                    document.getElementById('risk-badge').className = 'mt-2 text-xs font-bold px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/30';
+                clearTimeout(timeoutId);
+                if (res.ok) {
+                    data = await res.json();
                 }
-
-                // Render scanned code
-                document.getElementById('code-display').innerText = code;
-
-            } catch (err) {
-                alert('Backend API Error: Ensure FastAPI server is running at http://localhost:8000');
+            } catch (e) {
+                // Backend offline or running in cloud browser - fallback seamlessly to local engine
             }
+
+            if (!data) {
+                data = auditCodeLocally(code);
+            }
+
+            alert(`🎯 Live Security Audit Complete!\n\nSecurity Score: ${data.security_score.toFixed(1)} / 100\nTotal Issues: ${data.total_issues}\nRisk Level: ${data.risk_level}`);
+
+            // Update UI Score & Gauges
+            const score = data.security_score;
+            document.getElementById('score-text').innerText = score.toFixed(1);
+            document.getElementById('total-issues').innerText = data.total_issues;
+            document.getElementById('crit-count').innerText = data.critical_count;
+            document.getElementById('high-count').innerText = data.high_count;
+            document.getElementById('med-count').innerText = data.medium_count;
+            document.getElementById('low-count').innerText = data.low_count;
+            document.getElementById('current-filename').innerText = "live_test.py";
+
+            // SVG Circle Offset Calculation: 339.29 is full circumference
+            const offset = 339.29 - (339.29 * (score / 100));
+            const scoreCircle = document.getElementById('score-circle');
+            scoreCircle.setAttribute('stroke-dashoffset', offset);
+
+            if (score >= 85) {
+                scoreCircle.className = 'text-emerald-500 transition-all duration-1000 ease-out';
+                document.getElementById('score-text').className = 'absolute text-3xl font-extrabold text-emerald-400';
+                document.getElementById('risk-badge').innerText = 'LOW RISK (PASS)';
+                document.getElementById('risk-badge').className = 'mt-2 text-xs font-bold px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30';
+                document.getElementById('pr-status-badge').innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> <span class="text-emerald-400">Ready to Merge</span>';
+                document.getElementById('issues-badge').innerText = '0 Issues Detected';
+                document.getElementById('issues-badge').className = 'text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-md font-mono';
+            } else {
+                scoreCircle.className = 'text-red-500 transition-all duration-1000 ease-out';
+                document.getElementById('score-text').className = 'absolute text-3xl font-extrabold text-red-500';
+                document.getElementById('risk-badge').innerText = 'CRITICAL RISK (BLOCK PR)';
+                document.getElementById('risk-badge').className = 'mt-2 text-xs font-bold px-3 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/30';
+                document.getElementById('pr-status-badge').innerHTML = '<i class="fa-solid fa-ban text-red-400"></i> <span class="text-red-400">Merging Blocked</span>';
+                document.getElementById('issues-badge').innerText = `${data.total_issues} Vulnerabilities Found`;
+                document.getElementById('issues-badge').className = 'text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-2.5 py-1 rounded-md font-mono';
+            }
+
+            // Render code in Code Display Viewer
+            const safeCode = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            document.getElementById('code-display').innerHTML = safeCode;
+
+            // Render Vulnerability Cards in AI Remediation Assistant
+            const vulnListEl = document.getElementById('vuln-list');
+            if (data.vulnerabilities && data.vulnerabilities.length > 0) {
+                vulnListEl.innerHTML = data.vulnerabilities.map(v => `
+                    <div class="bg-gray-900/90 border border-red-500/30 rounded-xl p-4 space-y-2">
+                        <div class="flex justify-between items-start">
+                            <span class="text-xs font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded border border-red-500/20">${v.severity} • Line ${v.line_number}</span>
+                            <span class="text-[10px] text-gray-500 font-mono">${v.id || 'CWE'}</span>
+                        </div>
+                        <h4 class="text-xs font-semibold text-gray-200">${v.rule_name}</h4>
+                        <p class="text-[11px] text-gray-400">${v.description}</p>
+                        <div class="bg-gray-950 p-2 rounded border border-gray-800 text-[10px] font-mono text-emerald-400 whitespace-pre-wrap">${v.ai_suggested_fix || ''}</div>
+                        <button onclick="applyFix('${v.id}')" class="w-full text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-1.5 rounded-lg transition-all">
+                            Apply AI Fix
+                        </button>
+                    </div>
+                `).join('');
+            } else {
+                vulnListEl.innerHTML = `
+                    <div class="bg-gray-900/90 border border-emerald-500/30 rounded-xl p-4 text-center space-y-2">
+                        <i class="fa-solid fa-circle-check text-emerald-400 text-2xl"></i>
+                        <h4 class="text-xs font-semibold text-emerald-300">All Security Checks Passed</h4>
+                        <p class="text-[11px] text-gray-400">No OWASP Top 10 vulnerabilities detected in code.</p>
+                    </div>
+                `;
+            }
+
+            // Scroll to score preview
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>
